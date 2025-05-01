@@ -2074,6 +2074,9 @@ class MistralForCausalLM(MistralPreTrainedModel):
                                 # This will only happen when we force the next token to be the end of thought token
                                 break
                             dqn_loss_list.append(actor_loss.mean())
+        if not self.training:
+            print(self.tokenizer.batch_decode(input_ids))
+            pprint(self.tokenizer.batch_decode(torch.stack(sampled_token_history, -1)))
 
         if loss_list:
             if self.first_and_last_mode:
