@@ -2076,7 +2076,6 @@ class MistralForCausalLM(MistralPreTrainedModel):
                             dqn_loss_list.append(actor_loss.mean())
         if not self.training:
             print(self.tokenizer.batch_decode(input_ids))
-
             pprint(self.tokenizer.batch_decode(torch.stack(sampled_token_history, -1)))
 
         if loss_list:
@@ -2125,6 +2124,7 @@ class MistralForCausalLM(MistralPreTrainedModel):
 
         if loss is not None:
             base_log_dict["loss_train"] = loss.item()
+            base_log_dict['logprob_thought'] = torch.stack(action_loglikelihoods_list).sum(0).mean().item()
         
         for loss_key, loss_val in base_log_dict.items():
             log_dict[loss_key] += float(loss_val) / self.n_tokens_print
