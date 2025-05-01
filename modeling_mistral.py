@@ -2119,35 +2119,35 @@ class MistralForCausalLM(MistralPreTrainedModel):
             return (loss,) + output if loss is not None else output
     
         base_log_dict = {
-            f"loss_{i}": nonzero_mean(loss_list[i]) for i in range(len(loss_list))
+            f"loss_{i}": float(nonzero_mean(loss_list[i])) for i in range(len(loss_list))
         }
 
         if loss is not None:
             base_log_dict["loss_train"] = loss.item()
         
         for loss_key, loss_val in base_log_dict.items():
-            log_dict[loss_key] += loss_val / self.n_tokens_print
+            log_dict[loss_key] += float(loss_val) / self.n_tokens_print
                 
         if self.use_policy_loss and policy_reward is not None:
-            log_dict["policy_loss"] += dqn_loss / self.n_tokens_print
-            log_dict["policy_reward"] += policy_reward.mean() / self.n_tokens_print
+            log_dict["policy_loss"] += float(dqn_loss) / self.n_tokens_print
+            log_dict["policy_reward"] += float(policy_reward.mean()) / self.n_tokens_print
 
         if not loss_list:
             if loss is not None:
-                log_dict["loss_0"] += loss / self.n_tokens_print
+                log_dict["loss_0"] += float(loss) / self.n_tokens_print
         else:
-            log_dict["loss_final"] += nonzero_mean(loss_list[-1]) / self.n_tokens_print
-            log_dict["loss_talk"] += sum(nonzero_mean(cur_loss_item) for cur_loss_item in loss_list[-self.n_ahead_talk:]) / self.n_ahead_talk / self.n_tokens_print
+            log_dict["loss_final"] += float(nonzero_mean(loss_list[-1])) / self.n_tokens_print
+            log_dict["loss_talk"] += float(sum(nonzero_mean(cur_loss_item) for cur_loss_item in loss_list[-self.n_ahead_talk:])) / self.n_ahead_talk / self.n_tokens_print
 
         # also log relative losses to loss_0
         if loss_list:
             for i in range(len(loss_list)):
                 talk_idx = min(max(i - (self.n_ahead - 1), 0), len(talk_loss_list) - 1)
                 if not talk_loss_list:
-                    cur_talk_loss = nonzero_mean(loss_list[0])
+                    cur_talk_loss = float(nonzero_mean(loss_list[0]))
                 else:
-                    cur_talk_loss = talk_loss_list[talk_idx]
-                log_dict[f"rel_loss_{i}"] += (nonzero_mean(loss_list[i]) - cur_talk_loss) / self.n_tokens_print
+                    cur_talk_loss = float(talk_loss_list[talk_idx])
+                log_dict[f"rel_loss_{i}"] += float(nonzero_mean(loss_list[i]) - cur_talk_loss) / self.n_tokens_print
         if self.training:
             self.training_steps += 1
         try:

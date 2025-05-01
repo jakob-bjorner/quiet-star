@@ -7,3 +7,18 @@ This project is implemented by simply patching the base Mistral implementation i
 One pitfall to be wary of: the model is not taught not to generate start and end thought tokens. Thus, when performing actual inference, it is necessary to mask these out.
 
 We make an 8-thought-token ahead (including start and end tokens) model [available via Huggingface](https://huggingface.co/ezelikman/quietstar-8-ahead).
+
+
+Getting started on sfcompute
+
+wget https://bootstrap.pypa.io/get-pip.py
+python3 get-pip.py
+pip install jupyter numpy==1.26.2 torch==2.1.2 accelerate==0.25.0 datasets==2.14.6 tokenizers==0.15.0 huggingface-hub==0.19.4 safetensors==0.4.1 wandb==0.15.12 sentencepiece==0.1.99 git+https://github.com/huggingface/transformers@e737446
+git clone https://github.com/jakob-bjorner/quiet-star.git
+rm /usr/local/lib/python3.10/dist-packages/transformers/models/mistral/configuration_mistral.py /usr/local/lib/python3.10/dist-packages/transformers/models/mistral/modeling_mistral.py 
+ln -s /root/quiet-star/configuration_mistral.py /usr/local/lib/python3.10/dist-packages/transformers/models/mistral/configuration_mistral.py 
+ln -s /root/quiet-star/modeling_mistral.py /usr/local/lib/python3.10/dist-packages/transformers/models/mistral/modeling_mistral.py 
+huggingface-cli login
+wandb login
+tmux
+python3 quiet-star-train
