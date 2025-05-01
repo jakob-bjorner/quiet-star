@@ -35,7 +35,7 @@ import numpy as np
 import warnings
 from collections import defaultdict
 from typing import List, Optional, Tuple, Union
-
+from pprint import pprint
 import torch
 import torch.nn.functional as F
 import torch.utils.checkpoint
@@ -2076,6 +2076,7 @@ class MistralForCausalLM(MistralPreTrainedModel):
                             dqn_loss_list.append(actor_loss.mean())
         if not self.training:
             print(self.tokenizer.batch_decode(input_ids))
+
             pprint(self.tokenizer.batch_decode(torch.stack(sampled_token_history, -1)))
 
         if loss_list:
