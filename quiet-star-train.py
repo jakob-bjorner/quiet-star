@@ -9,7 +9,7 @@ from transformers import TrainingArguments, Trainer
 import os
 import time
 import wandb
-from huggingface_custom_callback import EarlyStoppingCallback
+# from huggingface_custom_callback import EarlyStoppingCallback
 from eval_helpers import preprocess_eval_function_gsm, preprocess_eval_function_csqa, preprocess_function, compute_metrics, truncate_or_pad
 random_seed = 42
 torch.manual_seed(random_seed)
@@ -29,7 +29,7 @@ n_ahead_global = 12
 n_examples = 1_000
 full_batch_size = 8
 eval_and_logging_steps = 10
-save_steps = 100
+save_steps = 300
 
 def model_init(params):
     original = False
@@ -70,7 +70,7 @@ def model_init(params):
         use_weighted_talk_head=True,
     )
     print("Loaded model")
-    tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
+    tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1", use_fast=False)
     tokenizer.padding_side = "right"
     tokenizer.pad_token_id = tokenizer.eos_token_id
 
@@ -99,7 +99,7 @@ def model_init(params):
     model.original_mode = original
     model.config_params = params
     model.run_start = int(time.time())
-    model.kill_after = 100
+    model.kill_after = 200
     model.train()
     return model
 

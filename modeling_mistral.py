@@ -24,14 +24,14 @@ import copy
 import os
 import time
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+# import seaborn as sns
+# import matplotlib.pyplot as plt
 import wandb
-from termcolor import colored
-from tqdm import tqdm
+# from termcolor import colored
+# from tqdm import tqdm
 import random
 import numpy as np
-from matplotlib.colors import LinearSegmentedColormap, LogNorm
+# from matplotlib.colors import LinearSegmentedColormap, LogNorm
 import warnings
 from collections import defaultdict
 from typing import List, Optional, Tuple, Union
@@ -69,71 +69,71 @@ logger = logging.get_logger(__name__)
 
 _CONFIG_FOR_DOC = "MistralConfig"
 
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.colors import HexColor
+# from reportlab.pdfgen import canvas
+# from reportlab.lib.pagesizes import letter
+# from reportlab.lib.colors import HexColor
 
-def save_tokens_with_rewards_to_pdf(input_ids, token_rewards, tokenizer, output_file="text.pdf", eps=0.2, eps2=0.5):
-    c = canvas.Canvas(output_file, pagesize=letter)
-    c.setFont("Courier", 8)
-    x, y = 50, 750
-    previous_text = ""
-    current_text = ""
-    for token_idx, reward in enumerate(token_rewards):
-        current_text = tokenizer.decode(input_ids[: token_idx + 1])
-        if current_text != previous_text:
-            diff_text = current_text[len(previous_text) :]
-            if "\n" in diff_text:
-                lines = diff_text.split("\n")
-                for line_idx, line in enumerate(lines):
-                    if line_idx > 0:
-                        x = 50
-                        y -= 12
-                    if abs(reward) < eps:
-                        opacity = 0
-                    elif abs(reward) > eps2:
-                        opacity = 0.8
-                    else:
-                        opacity = 0.8 * (abs(reward) - eps) / (eps2 - eps)
-                    text_width = c.stringWidth(line)
-                    if reward > 0:
-                        highlight_color = HexColor("#4CCD99")
-                    else:
-                        highlight_color = HexColor("#FFC700")
-                    highlight_color.alpha = opacity
-                    c.setFillColor(highlight_color)
-                    c.rect(x, y - 2, text_width, 10, fill=True, stroke=False)
-                    c.setFillColor(HexColor("#000000"))
-                    c.drawString(x, y, line)
-                    x += text_width
-            else:
-                if abs(reward) < eps:
-                    opacity = 0
-                elif abs(reward) > eps2:
-                    opacity = 0.8
-                else:
-                    opacity = 0.8 * (abs(reward) - eps) / (eps2 - eps)
-                text_width = c.stringWidth(diff_text)
-                if reward > 0:
-                    highlight_color = HexColor("#4CCD99")
-                else:
-                    highlight_color = HexColor("#FFC700")
-                highlight_color.alpha = opacity
-                c.setFillColor(highlight_color)
-                c.rect(x, y - 2, text_width, 10, fill=True, stroke=False)
-                c.setFillColor(HexColor("#000000"))
-                c.drawString(x, y, diff_text)
-                x += text_width
-            if x > 550:
-                x = 50
-                y -= 12
-            if y < 50:
-                c.showPage()
-                y = 750
-                x = 50
-            previous_text = current_text
-    c.showPage()
-    c.save()
+# def save_tokens_with_rewards_to_pdf(input_ids, token_rewards, tokenizer, output_file="text.pdf", eps=0.2, eps2=0.5):
+#     c = canvas.Canvas(output_file, pagesize=letter)
+#     c.setFont("Courier", 8)
+#     x, y = 50, 750
+#     previous_text = ""
+#     current_text = ""
+#     for token_idx, reward in enumerate(token_rewards):
+#         current_text = tokenizer.decode(input_ids[: token_idx + 1])
+#         if current_text != previous_text:
+#             diff_text = current_text[len(previous_text) :]
+#             if "\n" in diff_text:
+#                 lines = diff_text.split("\n")
+#                 for line_idx, line in enumerate(lines):
+#                     if line_idx > 0:
+#                         x = 50
+#                         y -= 12
+#                     if abs(reward) < eps:
+#                         opacity = 0
+#                     elif abs(reward) > eps2:
+#                         opacity = 0.8
+#                     else:
+#                         opacity = 0.8 * (abs(reward) - eps) / (eps2 - eps)
+#                     text_width = c.stringWidth(line)
+#                     if reward > 0:
+#                         highlight_color = HexColor("#4CCD99")
+#                     else:
+#                         highlight_color = HexColor("#FFC700")
+#                     highlight_color.alpha = opacity
+#                     c.setFillColor(highlight_color)
+#                     c.rect(x, y - 2, text_width, 10, fill=True, stroke=False)
+#                     c.setFillColor(HexColor("#000000"))
+#                     c.drawString(x, y, line)
+#                     x += text_width
+#             else:
+#                 if abs(reward) < eps:
+#                     opacity = 0
+#                 elif abs(reward) > eps2:
+#                     opacity = 0.8
+#                 else:
+#                     opacity = 0.8 * (abs(reward) - eps) / (eps2 - eps)
+#                 text_width = c.stringWidth(diff_text)
+#                 if reward > 0:
+#                     highlight_color = HexColor("#4CCD99")
+#                 else:
+#                     highlight_color = HexColor("#FFC700")
+#                 highlight_color.alpha = opacity
+#                 c.setFillColor(highlight_color)
+#                 c.rect(x, y - 2, text_width, 10, fill=True, stroke=False)
+#                 c.setFillColor(HexColor("#000000"))
+#                 c.drawString(x, y, diff_text)
+#                 x += text_width
+#             if x > 550:
+#                 x = 50
+#                 y -= 12
+#             if y < 50:
+#                 c.showPage()
+#                 y = 750
+#                 x = 50
+#             previous_text = current_text
+#     c.showPage()
+#     c.save()
 
 
 # Copied from transformers.models.llama.modeling_llama._get_unpad_data
@@ -2001,57 +2001,57 @@ class MistralForCausalLM(MistralPreTrainedModel):
                             if self.use_start_thought_token:
                                 action_loglikelihoods_list.append(start_loglikelihood)                                
 
-                        if ahead_idx == self.n_ahead + self.n_ahead_talk - 2 and self.eval_mode:
-                            with torch.no_grad():
-                                # calculate the 0.75 quantile of the rewards
-                                filtered_tokens = input_ids[:, :policy_reward.shape[-1]].cpu().detach().numpy().flatten()
-                                filtered_tokens_mask = filtered_tokens != self.tokenizer.pad_token_id
-                                filtered_tokens = filtered_tokens[filtered_tokens_mask]
-                                filtered_rewards = policy_reward.float().cpu().detach().numpy()[:, :seq_len - self.n_ahead_talk].flatten()
-                                filtered_rewards = filtered_rewards[filtered_tokens_mask]
+                    #     if ahead_idx == self.n_ahead + self.n_ahead_talk - 2 and self.eval_mode:
+                    #         with torch.no_grad():
+                    #             # calculate the 0.75 quantile of the rewards
+                    #             filtered_tokens = input_ids[:, :policy_reward.shape[-1]].cpu().detach().numpy().flatten()
+                    #             filtered_tokens_mask = filtered_tokens != self.tokenizer.pad_token_id
+                    #             filtered_tokens = filtered_tokens[filtered_tokens_mask]
+                    #             filtered_rewards = policy_reward.float().cpu().detach().numpy()[:, :seq_len - self.n_ahead_talk].flatten()
+                    #             filtered_rewards = filtered_rewards[filtered_tokens_mask]
 
-                                abs_reward_list = np.abs(policy_reward.float().cpu().detach().numpy()[:, :seq_len - self.n_ahead_talk].flatten())
-                                abs_reward_list = abs_reward_list[filtered_tokens_mask]
-                                medium_quantile = np.quantile(abs_reward_list, 0.5)
-                                upper_quantile = np.quantile(abs_reward_list, 0.95)
+                    #             abs_reward_list = np.abs(policy_reward.float().cpu().detach().numpy()[:, :seq_len - self.n_ahead_talk].flatten())
+                    #             abs_reward_list = abs_reward_list[filtered_tokens_mask]
+                    #             medium_quantile = np.quantile(abs_reward_list, 0.5)
+                    #             upper_quantile = np.quantile(abs_reward_list, 0.95)
 
-                                save_tokens_with_rewards_to_pdf(
-                                    filtered_tokens,
-                                    [0] + filtered_rewards.tolist(),
-                                    self.tokenizer,
-                                    output_file=f"texts/rewards_talk_{self.n_ahead_talk}_{self.training_steps}.pdf",
-                                    eps=medium_quantile,
-                                    eps2=upper_quantile,
-                                )
+                    #             save_tokens_with_rewards_to_pdf(
+                    #                 filtered_tokens,
+                    #                 [0] + filtered_rewards.tolist(),
+                    #                 self.tokenizer,
+                    #                 output_file=f"texts/rewards_talk_{self.n_ahead_talk}_{self.training_steps}.pdf",
+                    #                 eps=medium_quantile,
+                    #                 eps2=upper_quantile,
+                    #             )
 
-                                def plot_kde(data, losses):
-                                    sns.set(style="whitegrid")
-                                    # Create the KDE plot
-                                    sns.kdeplot(data, fill=True)
-                                    # Set the plot title and labels
-                                    plt.title("KDE Plot")
-                                    plt.xlabel("Value")
-                                    plt.ylabel("Density")
-                                    # Save the plot
-                                    plt.savefig(f"texts/kde_talk_{self.n_ahead_talk}_{self.training_steps}.pdf")
-                                    # Close the plot
-                                    plt.close()
+                    #             def plot_kde(data, losses):
+                    #                 sns.set(style="whitegrid")
+                    #                 # Create the KDE plot
+                    #                 sns.kdeplot(data, fill=True)
+                    #                 # Set the plot title and labels
+                    #                 plt.title("KDE Plot")
+                    #                 plt.xlabel("Value")
+                    #                 plt.ylabel("Density")
+                    #                 # Save the plot
+                    #                 plt.savefig(f"texts/kde_talk_{self.n_ahead_talk}_{self.training_steps}.pdf")
+                    #                 # Close the plot
+                    #                 plt.close()
 
-                                    # Step 1: Create a base color palette
-                                    base_colors = sns.color_palette("light:#5A9", n_colors=256)  # More colors for a smoother gradient
-                                    base_cmap = LinearSegmentedColormap.from_list("log_light", base_colors)
-                                    log_norm = LogNorm(vmin=1e-3, vmax=10)
+                    #                 # Step 1: Create a base color palette
+                    #                 base_colors = sns.color_palette("light:#5A9", n_colors=256)  # More colors for a smoother gradient
+                    #                 base_cmap = LinearSegmentedColormap.from_list("log_light", base_colors)
+                    #                 log_norm = LogNorm(vmin=1e-3, vmax=10)
 
-                                    sns.kdeplot(x=data, y=losses, fill=True, levels=20, norm=log_norm, cut=0, linewidths=0)
-                                    # limit y to 0 to 25 and x to -1 to 1
-                                    plt.xlim(-1, 1)
-                                    plt.ylim(0, 25)
-                                    plt.savefig(f"texts/jointer_talk_{self.n_ahead_talk}_{self.training_steps}.pdf")
-                                    plt.close()
+                    #                 sns.kdeplot(x=data, y=losses, fill=True, levels=20, norm=log_norm, cut=0, linewidths=0)
+                    #                 # limit y to 0 to 25 and x to -1 to 1
+                    #                 plt.xlim(-1, 1)
+                    #                 plt.ylim(0, 25)
+                    #                 plt.savefig(f"texts/jointer_talk_{self.n_ahead_talk}_{self.training_steps}.pdf")
+                    #                 plt.close()
 
-                                self.all_rewards.extend(filtered_rewards)
-                                self.all_unreduced_losses.extend(unreduced_loss[:, :-1].flatten()[filtered_tokens_mask].float().flatten().cpu().detach().numpy())
-                                plot_kde(self.all_rewards, self.all_unreduced_losses)
+                    #             self.all_rewards.extend(filtered_rewards)
+                    #             self.all_unreduced_losses.extend(unreduced_loss[:, :-1].flatten()[filtered_tokens_mask].float().flatten().cpu().detach().numpy())
+                    #             plot_kde(self.all_rewards, self.all_unreduced_losses)
 
                         for action_loglikelihoods_2d in action_loglikelihoods_list:
                             train_policy_reward = policy_reward
