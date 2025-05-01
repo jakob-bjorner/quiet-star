@@ -2075,8 +2075,8 @@ class MistralForCausalLM(MistralPreTrainedModel):
                                 break
                             dqn_loss_list.append(actor_loss.mean())
         if not self.training:
-            print(self.tokenizer.batch_decode(input_ids))
-            pprint(self.tokenizer.batch_decode(torch.stack(sampled_token_history, -1)))
+            print(self.tokenizer.batch_decode(input_ids[0]))
+            pprint(self.tokenizer.batch_decode(torch.stack(sampled_token_history, -1)[:255]))
 
         if loss_list:
             if self.first_and_last_mode:
